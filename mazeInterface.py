@@ -2,7 +2,7 @@ import time
 
 import pygame
 import sys
-from maze import Maze
+
 
 # Definir las dimensiones del tablero
 rows, columns = 5, 8
