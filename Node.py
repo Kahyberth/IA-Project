@@ -1,7 +1,7 @@
 import numpy
 
 
-class Nodo:
+class Node:
 
     def __init__(self, state, cost, father):
         self.state = state
