@@ -2,11 +2,16 @@ import heapq
 from Nodo import Nodo
 
 class Busquedas:
-    def costo_uniforme_modificado(inicio, meta, laberinto):
+
+    #Constructor, recibe como parametro el laberinto que se desea explorar
+    def __init__(self, labarinto):
+        self.laberinto = labarinto
+
+    def costo_uniforme_modificado(self, inicio, meta):
         cola_prioridad = [Nodo(inicio, 0, 0)]
         nodos_expandidos = set()
         ramas_olvidadas = {}
-
+        laberinto = self.laberinto
         while cola_prioridad:
             nodo_actual = heapq.heappop(cola_prioridad)
 
@@ -33,6 +38,61 @@ class Busquedas:
                     ramas_olvidadas[siguiente_estado] = costo_acumulado
 
         return None  # No se encontró una solución
+
+
+    #Busqueda A*
+    def astar(self, start, goal):
+        open_list = [(0, start)]  # Prioridad y posición del nodo de inicio
+        came_from = {}
+        g_score = {start: 0}
+        grid = self.laberinto
+
+        while open_list:
+            open_list.sort()
+            current_cost, current_node = open_list.pop(0)
+
+            if current_node == goal:
+                path = []
+                while current_node in came_from:
+                    path.insert(0, current_node)
+                    current_node = came_from[current_node]
+                return path
+
+            for neighbor in get_neighbors(current_node, grid):
+                x, y = neighbor
+                # Coste unitario de movimiento
+                cost = 1
+                if grid[x][y] == 3:  # Justo disminuye el costo acumulado en 2
+                    cost -= 2
+                elif grid[x][y] == 4:  # Gato malvado aumenta el costo acumulado en 3
+                    cost += 3
+
+                tentative_g_score = g_score[current_node] + cost
+
+                if neighbor not in g_score or tentative_g_score < g_score[neighbor]:
+                    g_score[neighbor] = tentative_g_score
+                    f_score = tentative_g_score + heuristic(neighbor, goal)
+
+                    if neighbor not in [item[1] for item in open_list]:
+                        open_list.append((f_score, neighbor))
+                    came_from[neighbor] = current_node
+
+        return None  # No se encontró un camino
+
+def heuristic(node, goal):
+    x1, y1 = node
+    x2, y2 = goal
+    return abs(x1 - x2) + abs(y1 - y2)
+
+def get_neighbors(node, grid):
+    x, y = node
+    neighbors = [(x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)]  # Movimientos arriba, abajo, izquierda, derecha
+    valid_neighbors = []
+    for neighbor in neighbors:
+        nx, ny = neighbor
+        if 0 <= nx < len(grid) and 0 <= ny < len(grid[0]) and grid[nx][ny] != 1:
+            valid_neighbors.append(neighbor)
+    return valid_neighbors
 
 
 def expandir_nodo(nodo, laberinto):
