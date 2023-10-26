@@ -10,9 +10,13 @@ laberinto = \
 inicio = (2, 7)
 meta = (2, 0)
 
-ruta = Busquedas.costo_uniforme_modificado(inicio, meta, laberinto)
 
-counter = 0
-for i in ruta:
-    counter +=1
-    print(f"Paso: {counter} ", i)
+ruta = Busquedas(laberinto).costo_uniforme_modificado(inicio,meta)
+print("Costo recursivo: ", ruta)
+
+
+astar = Busquedas(laberinto).astar(inicio,meta)
+
+print("Print Astar: ", astar)
+
+
