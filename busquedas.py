@@ -41,58 +41,59 @@ class Busquedas:
 
 
     #Busqueda A*
-    def astar(self, start, goal):
-        open_list = [(0, start)]  # Prioridad y posición del nodo de inicio
-        came_from = {}
-        g_score = {start: 0}
+    def astar(self, inicio, objetivo):
+        lista_abierta = [(0, inicio)]  # Prioridad y posición del nodo de inicio
+        vino_de = {}
+        g_puntaje = {inicio: 0}
         grid = self.laberinto
+        while lista_abierta:
+            # Ordenar la lista de nodos abiertos por el menor costo
+            lista_abierta.sort()
+            costo_actual, nodo_actual = lista_abierta.pop(0)
 
-        while open_list:
-            open_list.sort()
-            current_cost, current_node = open_list.pop(0)
+            if nodo_actual == objetivo:
+                # Reconstruir el camino y devolverlo
+                camino = []
+                while nodo_actual in vino_de:
+                    camino.insert(0, nodo_actual)
+                    nodo_actual = vino_de[nodo_actual]
+                return camino
 
-            if current_node == goal:
-                path = []
-                while current_node in came_from:
-                    path.insert(0, current_node)
-                    current_node = came_from[current_node]
-                return path
+            for vecino in obtener_vecinos(nodo_actual, grid):
+                x, y = vecino
+                # Costo unitario de movimiento
+                costo = 1
+                if grid[x][y] == 3:  # "Justo" reduce el costo acumulado en 2
+                    costo -= 2
+                elif grid[x][y] == 4:  # "Gato malvado" aumenta el costo acumulado en 3
+                    costo += 3
 
-            for neighbor in get_neighbors(current_node, grid):
-                x, y = neighbor
-                # Coste unitario de movimiento
-                cost = 1
-                if grid[x][y] == 3:  # Justo disminuye el costo acumulado en 2
-                    cost -= 2
-                elif grid[x][y] == 4:  # Gato malvado aumenta el costo acumulado en 3
-                    cost += 3
+                puntaje_g_tentativo = g_puntaje[nodo_actual] + costo
 
-                tentative_g_score = g_score[current_node] + cost
+                if vecino not in g_puntaje or puntaje_g_tentativo < g_puntaje[vecino]:
+                    g_puntaje[vecino] = puntaje_g_tentativo
+                    puntaje_f = puntaje_g_tentativo + heurística(vecino, objetivo)
 
-                if neighbor not in g_score or tentative_g_score < g_score[neighbor]:
-                    g_score[neighbor] = tentative_g_score
-                    f_score = tentative_g_score + heuristic(neighbor, goal)
-
-                    if neighbor not in [item[1] for item in open_list]:
-                        open_list.append((f_score, neighbor))
-                    came_from[neighbor] = current_node
+                    if vecino not in [elemento[1] for elemento in lista_abierta]:
+                        lista_abierta.append((puntaje_f, vecino))
+                    vino_de[vecino] = nodo_actual
 
         return None  # No se encontró un camino
 
-def heuristic(node, goal):
-    x1, y1 = node
-    x2, y2 = goal
+def heurística(nodo, objetivo):
+    x1, y1 = nodo
+    x2, y2 = objetivo
     return abs(x1 - x2) + abs(y1 - y2)
 
-def get_neighbors(node, grid):
-    x, y = node
-    neighbors = [(x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)]  # Movimientos arriba, abajo, izquierda, derecha
-    valid_neighbors = []
-    for neighbor in neighbors:
-        nx, ny = neighbor
+def obtener_vecinos(nodo, grid):
+    x, y = nodo
+    vecinos = [(x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)]  # Movimientos arriba, abajo, izquierda, derecha
+    vecinos_válidos = []
+    for vecino in vecinos:
+        nx, ny = vecino
         if 0 <= nx < len(grid) and 0 <= ny < len(grid[0]) and grid[nx][ny] != 1:
-            valid_neighbors.append(neighbor)
-    return valid_neighbors
+            vecinos_válidos.append(vecino)
+    return vecinos_válidos
 
 
 def expandir_nodo(nodo, laberinto):
