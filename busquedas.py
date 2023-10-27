@@ -54,6 +54,7 @@ class Busquedas:
         grid = self.laberinto
 
 
+
         while lista_abierta:
             # Ordenar la lista de nodos abiertos por el menor costo
             lista_abierta.sort()
@@ -65,7 +66,7 @@ class Busquedas:
                 while nodo_actual in vino_de:
                     camino.insert(0, nodo_actual)
                     nodo_actual = vino_de[nodo_actual]
-                return camino
+                return camino, g_puntaje
 
             for vecino in obtener_vecinos(nodo_actual, grid):
                 x, y = vecino
@@ -81,10 +82,11 @@ class Busquedas:
                 if vecino not in g_puntaje or puntaje_g_tentativo < g_puntaje[vecino]:
                     g_puntaje[vecino] = puntaje_g_tentativo
                     puntaje_f = puntaje_g_tentativo + heurística(vecino, objetivo)
-
                     if vecino not in [elemento[1] for elemento in lista_abierta]:
                         lista_abierta.append((puntaje_f, vecino))
                     vino_de[vecino] = nodo_actual
+
+
 
         return None  # No se encontró un camino
 
