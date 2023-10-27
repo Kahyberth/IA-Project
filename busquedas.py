@@ -4,10 +4,14 @@ from Nodo import Nodo
 class Busquedas:
 
     #Constructor, recibe como parametro el laberinto que se desea explorar
-    def __init__(self, labarinto):
+    def __init__(self, labarinto, inicio, meta):
         self.laberinto = labarinto
+        self.inicio = inicio
+        self.meta = meta
 
-    def costo_uniforme_modificado(self, inicio, meta):
+    def costo_uniforme_modificado(self):
+        inicio = self.inicio
+        meta = self.meta
         cola_prioridad = [Nodo(inicio, 0, 0)]
         nodos_expandidos = set()
         ramas_olvidadas = {}
@@ -41,11 +45,15 @@ class Busquedas:
 
 
     #Busqueda A*
-    def astar(self, inicio, objetivo):
+    def astar(self):
+        inicio = self.inicio
+        objetivo = self.meta
         lista_abierta = [(0, inicio)]  # Prioridad y posición del nodo de inicio
         vino_de = {}
         g_puntaje = {inicio: 0}
         grid = self.laberinto
+
+
         while lista_abierta:
             # Ordenar la lista de nodos abiertos por el menor costo
             lista_abierta.sort()
