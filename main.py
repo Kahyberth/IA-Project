@@ -29,8 +29,8 @@ def update_positions():
     global inicio, meta
     inicio = tuple(map(int, inicio_entry.get().split(',')))
     meta = tuple(map(int, meta_entry.get().split(',')))
-    costo_uniforme = Busquedas(laberinto).costo_uniforme_modificado(inicio, meta)
-    astar = Busquedas(laberinto).astar(inicio, meta)
+    costo_uniforme = Busquedas(laberinto, inicio, meta).costo_uniforme_modificado()
+    astar = Busquedas(laberinto, inicio, meta).astar()
     costo_uniforme_parsed = [tupla[0] for tupla in costo_uniforme]
     algo = seleccionar_algoritmo()
     if algo == "Costo Uniforme Modificado":
