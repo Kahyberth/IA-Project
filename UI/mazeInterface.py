@@ -1,19 +1,21 @@
 import time
 
 import pygame
-import sys
 
 
-def display_maze(matriz, inicio, meta, ruta, algoritmo):
-    # Configurar Pygame
+def display_maze(matriz, inicio, meta, ruta, algoritmo, peso):
+
     pygame.init()
 
-    # Definir las dimensiones del tablero
+    # Dimension del tablero
     cell_width = 100
     rows = len(matriz)
     columns = len(matriz[0])
+    indice_actual = 0
+    peso = list(peso)
 
-    screen_width = columns * cell_width + 300  # 300 es el ancho de la columna para mostrar datos adicionales
+
+    screen_width = columns * cell_width + 300
     screen_height = rows * cell_width
     screen = pygame.display.set_mode((screen_width, screen_height))
     pygame.display.set_caption("Agente Coraje")
@@ -51,18 +53,20 @@ def display_maze(matriz, inicio, meta, ruta, algoritmo):
                 if characters == 3:  # Justo
                     screen.blit(justo_image, (x, y))
 
-    peso_acumulado = ruta[-1][1]
+
     # Función para mostrar datos adicionales
     def mostrar_datos_adicionales(algoritmo):
         datos_font = pygame.font.Font(None, 32)
-        texto = datos_font.render("Peso acumulado: " + str(peso_acumulado), True, (255, 255, 255))
 
-        # Ajusta la posición del texto en el espacio extra a la derecha
-        x_texto = columns * cell_width + 10  # Puedes ajustar este valor según tus necesidades
+        if 0 <= indice_actual < len(peso):
+            texto = datos_font.render("Peso acumulado: " + str(peso[indice_actual]), True, (255, 255, 255))
+        else:
+            texto = datos_font.render("Peso acumulado: "+str(peso[-1]), True, (255, 255, 255))
+
+        x_texto = columns * cell_width + 10
         y_texto = 10
         screen.blit(texto, (x_texto, y_texto))
 
-        # Dibuja el nombre del algoritmo seleccionado
         texto = datos_font.render("Algoritmo: " + algoritmo, True, (255, 255, 255))
         y_texto += 50
         screen.blit(texto, (x_texto, y_texto))
@@ -94,7 +98,9 @@ def display_maze(matriz, inicio, meta, ruta, algoritmo):
                 pygame.display.update()
                 time.sleep(0.01)
 
+
             inicio = nueva_posicion
+            indice_actual += 1
         else:
             screen.fill((0, 0, 0))
             dibujar_tablero()
