@@ -3,12 +3,13 @@ from UI.mazeInterface import display_maze
 from UI.selectAlgorithm import seleccionar_algoritmo
 from busquedas import Busquedas
 
-laberinto = [
-    [0, 0, 4, 0, 0, 0, 0, 0],  # 1 obstaculo
-    [0, 3, 1, 1, 3, 1, 1, 0],  # 2 Muriel
-    [0, 1, 0, 0, 0, 1, 1, 0],  # 3 Justo
-    [0, 1, 0, 1, 1, 1, 1, 0],  # 4 Katz
-    [0, 3, 0, 4, 0, 0, 0, 0]]  # 5 Agente
+laberinto = \
+    [[0, 0, 0, 3, 0, 0, 0, 0],
+     [0, 3, 1, 1, 4, 1, 1, 0],
+     [0, 1, 0, 4, 4, 1, 1, 0],
+     [0, 1, 0, 1, 1, 1, 1, 0],
+     [0, 3, 0, 4, 0, 1, 0, 0]]
+
 
 # Create a tkinter window
 root = tk.Tk()
@@ -32,11 +33,19 @@ def update_positions():
     costo_uniforme = Busquedas(laberinto, inicio, meta).costo_uniforme_modificado()
     astar = Busquedas(laberinto, inicio, meta).astar()
     costo_uniforme_parsed = [tupla[0] for tupla in costo_uniforme]
+    costo_uniforme_peso = [tupla[1] for tupla in costo_uniforme]
+    astar_parsed = astar[0]
+    astar_peso = [value for value in astar[1].values() if isinstance(value, int)]
     algo = seleccionar_algoritmo()
     if algo == "Costo Uniforme Modificado":
-        display_maze(laberinto, inicio, meta, costo_uniforme_parsed.copy(), algo)
+        print("Costo peso: ", costo_uniforme_peso)
+        print("Costo Ruta: ", costo_uniforme_parsed)
+        display_maze(laberinto, inicio, meta, costo_uniforme_parsed.copy(), algo, costo_uniforme_peso)
     elif algo == "A*":
-        display_maze(laberinto, inicio, meta, astar.copy(), algo)
+        print(astar)
+        print("Astar peso: ", set(astar_peso))
+        print("Astar Ruta: ", astar_parsed)
+        display_maze(laberinto, inicio, meta, astar_parsed.copy(), algo, set(astar_peso))
 
 # Create a button to update the positions
 update_button = tk.Button(root, text="Update Positions", command=update_positions)
